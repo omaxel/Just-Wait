@@ -1,0 +1,150 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Just Wait test tool</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0 0 30px 0;
+        }
+
+        h1 {
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            h1 a {
+                text-decoration: none;
+            }
+
+        table {
+            table-layout: fixed;
+        }
+
+            table td {
+                word-break: break-all;
+            }
+    </style>
+</head>
+<body>
+    <h1><a href="https://github.com/OmarMuscatello/Just-Wait">Just Wait</a> test tool</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="twelve columns">
+                <h3>What does it do?</h3>
+                <p>
+                    Executes a function after a specified amount of time (<code>timeout</code> from now) from the beginning of an Ajax request.<br />
+                    If the AJAX requests ends before the specified amount of time, the function will never be executed.
+                </p>
+                <p>
+                    The tool below allows you to test that functionality (see <code>jqXHR -> wait</code> event in the status section).
+                </p>
+                <p>
+                    See the <a href="https://github.com/OmarMuscatello/Just-Wait">documentation page</a> for more information.
+                </p>
+
+                <h3>Config</h3>
+
+                <div class="row">
+                    <div class="six columns">
+                        <label>Response time (s)</label>
+                        <input id="responseTime" type="number" value="3" required />
+                    </div>
+
+                    <div class="six columns">
+                        <label>JustWait wait for (ms)</label>
+                        <input id="waitFor" type="number" value="1000" required />
+                    </div>
+                </div>
+
+                <hr />
+
+                <h3>Status</h3>
+                <table class="u-full-width">
+                    <thead>
+                        <tr>
+                            <th width="300px">Event</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="status">
+                        <tr><td colspan="2">[Status will be shown here]</td></tr>
+                    </tbody>
+                </table>
+
+                <button id="btnStartRequest" class="button-primary">Start request</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://rawgit.com/OmarMuscatello/Just-Wait/master/dist/just-wait.min.js"></script>
+
+    <script>
+        (function () {
+            const $status = $('#status');
+            const $waitFor = $('#waitFor');
+            const $responseTime = $('#responseTime');
+
+            $waitFor.val(JustWait.options.waitFor);
+
+            function resetStatus() {
+                $status.html('');
+            }
+
+            function appendStatus(event, description) {
+                $status.append("<tr><td>" + event + "</td><td>" + description + "</td></tr>");
+            }
+
+            function startRequest() {
+                resetStatus();
+
+                let responseTime = parseInt($responseTime.val());
+
+                if (!Number.isInteger(responseTime) || responseTime < 0 || responseTime > 10) {
+                    appendStatus("Response delay field must be a number between 0 and 10");
+                    return;
+                }
+
+                let waitFor = parseInt($waitFor.val());
+
+                if (!Number.isInteger(responseTime) || waitFor < 0 || waitFor > 10000) {
+                    appendStatus("JustWait timeout field must be a number between 0 and 10000");
+                    return;
+                }
+
+                appendStatus("Executing ajax method", "");
+
+                $.get({
+                    url: "https://reqres.in/api/users/1?delay=" + responseTime,
+                    waitFor: waitFor
+                })
+                    .wait(() => {
+                        appendStatus("jqXHR -> wait", "Passed " + waitFor + " ms and still waiting...");
+                    })
+                    .done((data) => {
+                        appendStatus("jqXHR -> done", "Response: " + JSON.stringify(data));
+                    })
+                    .fail(() => {
+                        appendStatus("jqXHR -> fail", "Error on API request");
+                    })
+                    .always(() => {
+                        appendStatus("jqXHR -> always", "Request end");
+                    })
+            }
+
+            $('#btnStartRequest').click(startRequest);
+        })();
+    </script>
+
+</body>
+</html>
