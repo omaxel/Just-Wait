@@ -1,0 +1,33 @@
+{
+  "name": "just-wait",
+  "version": "1.0.0",
+  "description": "A lightweight jQuery Ajax util library",
+  "main": "./src/index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && webpack --config webpack/production.config.js",
+    "devserver": "webpack-dev-server --port 9000 --config webpack/development.config.js --progress --colors --hot --content-base ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OmarMuscatello/Just-Wait.git"
+  },
+  "author": "Omar Muscatello",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OmarMuscatello/Just-Wait/issues"
+  },
+  "homepage": "https://github.com/OmarMuscatello/Just-Wait#readme",
+  "devDependencies": {
+    "babel": "^6.0.15",
+    "babel-cli": "^6.4.0",
+    "babel-core": "^6.1.2",
+    "babel-loader": "^6.0.1",
+    "babel-preset-es2015": "^6.1.2",
+    "rimraf": "^2.5.0",
+    "webpack": "^1.12.3",
+    "webpack-dev-server": "^1.12.1",
+    "webpack-merge": "^0.7.3"
+  },
+  "dependencies": {}
+}
